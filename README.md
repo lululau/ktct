@@ -1,28 +1,78 @@
 # Ktct
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ktct`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+KT Crypto Tools
 
 ## Installation
 
-Add this line to your application's Gemfile:
 
-```ruby
-gem 'ktct'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install it yourself as:
 
     $ gem install ktct
 
+Or:
+
+    $ sudo gem install ktct
+
 ## Usage
 
-TODO: Write usage instructions here
+```
+Commands:
+  ktct bf <SUB_COMMAND> <OPTS>   # crypto utils for baofu  
+  ktct help [COMMAND]            # Describe available commands or one specific command  
+  ktct wjs <SUB_COMMAND> <OPTS>  # crypto utils for wangjinshe  
+
+Options:  
+  -c, [--config=CONFIG]  
+                         # Default: ~/.ktct.yml  
+
+bf Sub-commands:  
+
+  ktct bf de_decrypt <DIGITAL_ENVELOP> [DATA]  # Decrypt data using specified digital envelop, DATA can also be read from STDIN. Both encrypted and unencrypted digital envelop are supported.  
+  ktct bf de_encrypt <DIGITAL_ENVELOP> [DATA]  # Encrypt data using specified digital envelop, DATA can also be read from STDIN  
+  ktct bf de_gen                               # Generate a random digital envelop  
+  ktct bf decrypt [DATA]                       # Decrypt data using client's private key, DATA can also be read from STDIN. This command should be used for decrypting digital envelop in protocol payment API.  
+  ktct bf decrypt_de <DIGITAL_ENVELOP>         # Decrypt encrypted digital envelop using client's private key  
+  ktct bf encrypt [DATA]                       # Encrypt data using Baofu's public key, DATA can also be read from STDIN. This command should be used for encrypting digital envelop in protocol payment API.  
+  ktct bf help [COMMAND]                       # Describe subcommands or one specific subcommand  
+  ktct bf sdecrypt [DATA]                      # Decrypt data using Baofu's public key, DATA can also be read from STDIN. This command should be used for decrypting data content in batch payment API.  
+  ktct bf sencrypt [DATA]                      # Encrypt data using client's private key, DATA can also be read from STDIN. This command should be used for encrypting data content in batch payment API.  
+  ktct bf ssign [DATA]                         # Sign data using client's private key, DATA can also be read from STDIN. This command should be used for signning params in protocol payment API.  
+  ktct bf sverify <SIGNATURE> [DATA]           # Verify signature using Baofu's public key, DATA can also be read from STDIN. This command should be used for verifying params signature in protocol payment ..  
+
+wjs Sub-commands:  
+
+  ktct wjs decrypt [DATA]             # Decrypt data using client's private key, DATA can also be read from STDIN  
+  ktct wjs encrypt [DATA]             # Encrypt data using Wangjinshe's public key, DATA can also be read from STDIN  
+  ktct wjs help [COMMAND]             # Describe subcommands or one specific subcommand  
+  ktct wjs sign [DATA]                # Sign data using client's private key, DATA can also be read from STDIN  
+  ktct wjs verify <SIGNATURE> [DATA]  # Verify signature using Wangjingshe's public key, DATA can also be read from STDIN  
+```
+
+## Config file Example
+
+```
+default_env: demo
+demo:
+  bf:
+    payee-private-key-path: /my/demo/keys/client.pfx
+    payee-private-key-passphrase: "12345678"
+    platform-certificate-path: /my/demo/keys/server.cer
+  wjs:
+    server_public_key_path: /my/demo/keys/client.pkcs8
+    client_private_key_path: /my/demo/keys/server.pkcs8
+
+pro:
+  bf:
+    payee-private-key-path: /my/pro/keys/client.pfx
+    payee-private-key-passphrase: "12345678"
+    platform-certificate-path: /my/pro/keys/server.cer
+  wjs:
+    server_public_key_path: /my/pro/keys/client.pkcs8
+    client_private_key_path: /my/pro/keys/server.pkcs8
+```
+
+Selected config environment could be specified via the `KTCT_ENV` environment variable.
+If no `KTCT_ENV` specified, the value of `default_env` option in config yaml would be used.
 
 ## Development
 
