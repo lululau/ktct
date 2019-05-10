@@ -3,7 +3,6 @@ require 'openssl'
 
 module Ktct
   class Baofu < ::Thor
-
     include Ktct::Config
     include Ktct::Cryptable
 
@@ -11,68 +10,67 @@ module Ktct
       alias_method :original_decrypt, :decrypt
     end
 
-    desc 'encrypt [DATA]', "Encrypt data using Baofu's public key, DATA can also be read from STDIN"
-    def encrypt(data=nil)
+    desc 'encrypt [DATA]', "Encrypt data using Baofu's public key, DATA can also be read from STDIN. This command should be used for encrypting digital envelop in protocol payment API."
+    def encrypt(data = nil)
       reset_key(config['platform-certificate-path'])
       puts super(data || STDIN.read)
     end
 
-    desc 'decrypt [DATA]', "Decrypt data using client's private key, DATA can also be read from STDIN"
-    def decrypt(data=nil)
+    desc 'decrypt [DATA]', "Decrypt data using client's private key, DATA can also be read from STDIN. This command should be used for decrypting digital envelop in protocol payment API."
+    def decrypt(data = nil)
       reset_key(config['payee-private-key-path'], config['payee-private-key-passphrase'])
       puts super(data || STDIN.read)
     end
 
-    desc 'sencrypt [DATA]', "Encrypt data using client's private key, DATA can also be read from STDIN"
-    def sencrypt(data=nil)
+    desc 'sencrypt [DATA]', "Encrypt data using client's private key, DATA can also be read from STDIN. This command should be used for encrypting data content in batch payment API."
+    def sencrypt(data = nil)
       reset_key(config['payee-private-key-path'], config['payee-private-key-passphrase'])
       puts stupid_encrypt(data || STDIN.read)
     end
 
-    desc 'sdecrypt [DATA]', "Decrypt data using Baofu's public key, DATA can also be read from STDIN"
-    def sdecrypt(data=nil)
+    desc 'sdecrypt [DATA]', "Decrypt data using Baofu's public key, DATA can also be read from STDIN. This command should be used for decrypting data content in batch payment API."
+    def sdecrypt(data = nil)
       reset_key(config['platform-certificate-path'])
       puts stupid_decrypt(data || STDIN.read)
     end
 
-    desc 'ssign [DATA]', "Sign data using client's private key, DATA can also be read from STDIN"
-    def ssign(data=nil)
+    desc 'ssign [DATA]', "Sign data using client's private key, DATA can also be read from STDIN. This command should be used for signning params in protocol payment API."
+    def ssign(data = nil)
       reset_key(config['payee-private-key-path'], config['payee-private-key-passphrase'])
       puts super(data || STDIN)
     end
 
-    desc 'sverify <SIGNATURE> [DATA]', "Verify signature using Baofu's public key, DATA can also be read from STDIN"
-    def sverify(signature, data=nil)
+    desc 'sverify <SIGNATURE> [DATA]', "Verify signature using Baofu's public key, DATA can also be read from STDIN. This command should be used for verifying params signature in protocol payment API."
+    def sverify(signature, data = nil)
       reset_key(config['platform-certificate-path'])
       puts super(signature, data || STDIN.read)
     end
 
-    desc 'de_encrypt <DIGITAL_ENVELOP> [DATA]',  "Encrypt data using specified digital envelop, DATA can also be read from STDIN"
-    def de_encrypt(digital_envelop, data=nil)
+    desc 'de_encrypt <DIGITAL_ENVELOP> [DATA]', 'Encrypt data using specified digital envelop, DATA can also be read from STDIN'
+    def de_encrypt(digital_envelop, data = nil)
       puts DigitalEnvelop.new(digital_envelop).encrypt(data || STDIN.read)
     end
 
-    desc 'de_decrypt <DIGITAL_ENVELOP> [DATA]',  "Decrypt data using specified digital envelop, DATA can also be read from STDIN"
-    def de_decrypt(digital_envelop, data=nil)
+    desc 'de_decrypt <DIGITAL_ENVELOP> [DATA]', 'Decrypt data using specified digital envelop, DATA can also be read from STDIN. Both encrypted and unencrypted digital envelop are supported.'
+    def de_decrypt(digital_envelop, data = nil)
       digital_envelop = decrypt_digital_envelop(digital_envelop)
       puts DigitalEnvelop.new(digital_envelop).decrypt(data || STDIN.read)
     end
 
-    desc 'de_gen', "Generate a random digital envelop"
+    desc 'de_gen', 'Generate a random digital envelop'
     def de_gen
       original = DigitalEnvelop.get
       puts "Original:  #{original}"
-      print "Encrypted: "
+      print 'Encrypted: '
       encrypted = encrypt(original.to_s)
     end
 
-    desc 'decrypt_de <DIGITAL_ENVELOP>',  "Decrypt encrypted digital envelop using client's private key"
+    desc 'decrypt_de <DIGITAL_ENVELOP>', "Decrypt encrypted digital envelop using client's private key"
     def decrypt_de(digital_envelop)
       decrypt(digital_envelop)
     end
 
     no_commands do
-
       def config
         super['bf']
       end
