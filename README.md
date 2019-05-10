@@ -45,7 +45,6 @@ wjs Sub-commands:
   ktct wjs encrypt [DATA]             # Encrypt data using Wangjinshe's public key, DATA can also be read from STDIN  
   ktct wjs help [COMMAND]             # Describe subcommands or one specific subcommand  
   ktct wjs sign [DATA]                # Sign data using client's private key, DATA can also be read from STDIN  
-  ktct wjs verify <SIGNATURE> [DATA]  # Verify signature using Wangjingshe's public key, DATA can also be read from STDIN  
 ```
 
 ## Config file Example
